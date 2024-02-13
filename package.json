@@ -1,0 +1,26 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "description": "trendlix dashboard backend",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ranim",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.0.3",
+    "nodemon": "^3.0.2",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "validator": "^13.11.0"
+  }
+}
