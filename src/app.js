@@ -9,7 +9,8 @@ const passport = require('passport')
 const app = express();
 
 const user = require('../routes/userRoute')
-const profile = require('../routes/profileRoutes')
+const profile = require('../routes/profileRoute')
+const website = require('../routes/websiteRoute')
 
 const port = process.env.PORT || 5000;
 
@@ -33,6 +34,7 @@ app.use(express.json());
 
 app.use('/', user);
 app.use('/', profile);
+app.use('/', website)
 
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
