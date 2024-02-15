@@ -5,6 +5,7 @@ const cors = require("cors");
 const express = require("express");
 require("../config/dbConnection");
 const passport = require('passport')
+const cookieParser = require('cookie-parser')
 
 const app = express();
 
@@ -14,17 +15,19 @@ const website = require('../routes/websiteRoute')
 
 const port = process.env.PORT || 5000;
 
+app.use(cookieParser())
+
 app.use(
   cors({
-    origin: ["http://localhost:3000", "*"],  
+    origin: "http://localhost:3000",  
     credentials: true,
-    exposedHeader: ["accessToken", "accesstoken", 'Access-Control-Allow-Origin'], 
+    exposedHeaders: ["accessToken", "accesstoken", 'Access-Control-Allow-Origin'], 
   })
 );
 app.use(function (req, res, next) {
   res.header('Content-Type', 'application/json');
   res.header("Access-Control-Allow-Credentials", true);
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');  
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });

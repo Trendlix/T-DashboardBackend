@@ -4,10 +4,17 @@ if(process.env.NODE_ENV !== 'production'){
     require('dotenv').config();
 }
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken')
 
 const addWebsite = async (req, res, next) =>{
     try {
-        const { userId } = req.params
+        const signedToken = req.cookies.accessToken;
+        console.log(signedToken)
+        let userId
+        jwt.verify(signedToken, process.env.JWT_SECERET, (err, decoded)=>{
+            if(err) res.status(401).json({message:err.message});
+            userId = decoded.id;
+        })
         const { name, domain, adminDomain, type, logo } = req.body
         console.log(req.body)
         const user = await User.findById(userId)
