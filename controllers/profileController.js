@@ -1,14 +1,14 @@
 const Profile = require('../models/profileModel')
-
+const jwt = require('jsonwebtoken')
 if (process.env.NODE_ENV !== 'production'){
     require('dotenv').config() 
 }
 
 const getUserProfile = async(req, res, next) => {
     try {
-        const id = req.params.id;
-        if(!id) throw new Error("Can't get user profile");
-        const userProfile = await Profile.findById(id);
+        const userId = req.userId
+        if(!userId) throw new Error("Can't get user profile");
+        const userProfile = await Profile.findOne({userId});
         if(!userProfile) throw new Error("User profile not found please register first");
         res.status(200).json(userProfile);
     } catch (error) {
@@ -19,10 +19,9 @@ const getUserProfile = async(req, res, next) => {
  
 const updateUserProfile = async(req, res, next) => {
     try {
-        const id = req.params.id;
-        // console.log('req.body', req.body);
-        if(!id) throw new Error("Can't get user profile");
-        const userProfile = await Profile.findById(id);
+        const userId = req.userId
+        if(!userId) throw new Error("Can't get user profile");
+        const userProfile = await Profile.findOne({userId})
         if(!userProfile) throw new Error("user profile not found");
 
         if(req.body.username){
@@ -47,9 +46,9 @@ const updateUserProfile = async(req, res, next) => {
 
 const deleteUserProfile = async(req, res, next) => {
     try {
-        const id = req.params.id;
-        if(!id) throw new Error("Can't get user profile");
-        await Profile.findByIdAndDelete(id).then(()=>{
+        const userId = req.userId
+        if(!userId) throw new Error("Can't get user profile");
+        await Profile.findOneAndDelete({userId}).then(()=>{
             res.status(200).json({message: "User profile deleted successfully"})
         }).catch(err => console.log(err));        
     } catch (error) {

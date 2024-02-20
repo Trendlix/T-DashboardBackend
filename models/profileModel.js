@@ -26,6 +26,11 @@ const ProfileSchema = new mongoose.Schema({
     photo: {
         type: String,
         default: 'https://banner2.cleanpng.com/20180701/eta/kisspng-computer-icons-user-profile-avatar-icon-5b3899483fa7a8.4711163815304359122607.jpg',
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     }
 })
 

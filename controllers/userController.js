@@ -7,36 +7,6 @@ if (process.env.NODE_ENV !== 'production'){
   require('dotenv').config() 
 }
 
-const register = async function (req, res, next) {
-  try {
-    console.log('req.body', req.body)
-    if (!req.body.name || !req.body.password || !req.body.email) {
-      throw new Error('name, email and password are required')
-    }
-    // Check if user already exists
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) throw new Error('User already exists');
-
-    const newUser = new User({
-      name: req.body.name,
-      email: req.body.email,
-      role: req?.body?.role || 'normal',
-      password: req.body.password
-    })
-    await newUser.save()
-    const newProfile = new Profile({
-      fullName: req.body.name,
-      username: req.body.name,
-      email: req.body.email,
-      role: req?.body?.role || 'normal'
-    })
-    await newProfile.save()
-    res.status(200).json({newUser, profileId: newProfile._id})
-  } catch (e) {
-    return res.status(400).json({message: e.message})
-  }
-}
-
 // Login
 const login = async function (req, res, next) {
   try {
@@ -59,11 +29,54 @@ const login = async function (req, res, next) {
   }
 };
 
+
+const register = async function (req, res, next) {
+  try {
+    console.log('req.body', req.body)
+    if (!req.body.name || !req.body.password || !req.body.email) {
+      throw new Error('name, email and password are required')
+    }
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) throw new Error('User already exists');
+
+    const newUser = new User({
+      name: req.body.name,
+      email: req.body.email,
+      role: req?.body?.role || 'normal',
+      password: req.body.password
+    })
+    await newUser.save()
+    const newProfile = new Profile({
+      fullName: req.body.name,
+      username: req.body.name,
+      email: req.body.email,
+      role: req?.body?.role || 'normal',
+      userId: newUser._id
+    })
+    await newProfile.save()
+    res.status(200).json({newUser, profileId: newProfile._id})
+  } catch (e) {
+    return res.status(400).json({message: e.message})
+  }
+}
+
 const logoutAll = async function (req, res) {
   try {
-    req.user.tokens = []
-    await req.user.save()
-    res.status(200).send('successfully logged out from all devices')
+    // const accessToken = req.cookies.accessToken
+    // if(!accessToken) return res.status(401).json({message: "Access token is required"})
+    // let userId
+    // jwt.verify(accessToken, process.env.JWT_SECERET, (err, decoded) => {
+    //   userId = decoded.id
+    // })
+    const userId = req.userId
+    const user = await User.findById(userId)
+    user.tokens = []
+    await user.save()
+    res
+      .clearCookie("accessToken", {httpOnly: true})
+      .status(200)
+      .send('successfully logged out from all devices')
   } catch (e) {
     res.status(500).json({ e })
   }
