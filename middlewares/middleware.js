@@ -14,7 +14,7 @@ const accessUser = async(req, res, next) =>{
     })
     const user = await User.findById(userId)
     // console.log(user)
-    if(!user) return res.status(401).json({message:err.message});
+    if(!user) return res.status(401).json({message:'user not found'});
     req.userId = userId
     next();
 }
@@ -33,7 +33,7 @@ const checkAdmin = async (req, res, next) =>{
         req.userId = userId
         const userRole = user.role
         if(userRole !== "super"){
-            return res.status(401).json({message: "You are not allowed to create new users"});
+            return res.status(401).json({message: "You are not allowed to do such action."});
         }
         next();
    } catch (error) {
