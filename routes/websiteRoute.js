@@ -1,9 +1,10 @@
 const express = require('express');
-const { addWebsite, deletedWebsite } = require('../controllers/websiteController');
-const { accessUser } = require("../middlewares/middleware")
+const { addWebsite, deletedWebsite, getWebsites } = require('../controllers/websiteController');
+const { accessUser, checkAdmin } = require("../middlewares/middleware")
 const router = express.Router();
 
-router.post('/website', accessUser , addWebsite)
-router.delete('/website', deletedWebsite)
+router.get('/website', checkAdmin, getWebsites)
+router.post('/website', checkAdmin , addWebsite)
+router.delete('/website/:websiteId', checkAdmin, deletedWebsite)
 
 module.exports = router;
