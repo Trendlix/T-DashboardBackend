@@ -29,7 +29,6 @@ const login = async function (req, res, next) {
   }
 };
 
-
 const register = async function (req, res, next) {
   try {
     console.log('req.body', req.body)
@@ -48,10 +47,11 @@ const register = async function (req, res, next) {
     })
     await newUser.save()
     const newProfile = new Profile({
-      fullName: req.body.name,
+      fullName: req.body.fullName,
       username: req.body.name,
       email: req.body.email,
       role: req?.body?.role || 'normal',
+      phoneNumber: req.body.phoneNumber,
       userId: newUser._id
     })
     await newProfile.save()
@@ -61,14 +61,22 @@ const register = async function (req, res, next) {
   }
 }
 
+const getAllUsers = async (req, res, next) => {
+  try {
+    const allUsers = await User.find();
+    if(allUsers.length > 0) {
+      res.status(200).json(allUsers)
+    }else{
+      res.status(400).json({message: "No Users found!"})
+    } 
+  } catch (error) {
+    console.log(error)
+    res.status(400).json({message: error.message})
+  }
+}
+
 const logoutAll = async function (req, res) {
   try {
-    // const accessToken = req.cookies.accessToken
-    // if(!accessToken) return res.status(401).json({message: "Access token is required"})
-    // let userId
-    // jwt.verify(accessToken, process.env.JWT_SECERET, (err, decoded) => {
-    //   userId = decoded.id
-    // })
     const userId = req.userId
     const user = await User.findById(userId)
     user.tokens = []
@@ -82,4 +90,14 @@ const logoutAll = async function (req, res) {
   }
 }
 
-module.exports = { register, login, logoutAll }
+const deleteUser = async (req, res, next) =>{
+  const { userId } = req.params
+  if(!userId){
+    return res.status(400).json({message: "Can't delete user as id is required"});
+  }
+  await User.findByIdAndDelete(userId)
+  await Profile.deleteOne({userId})
+  res.status(200).json({message: "User deleted successfully"})
+}
+
+module.exports = { register, login, logoutAll, getAllUsers, deleteUser }
