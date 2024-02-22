@@ -28,9 +28,8 @@ const addWebsite = async (req, res, next) =>{
                     userId
                 })
                 await newWebsite.save()
-                const websiteToken = await jwt.sign({id: newWebsite._id}, process.env.JWT_SECERET)
-                res.cookie("websiteData", websiteToken, {httpOnly: true,})
-                    .status(200).json({message: "website created successfully"})
+                // const websiteToken = await jwt.sign({id: newWebsite._id}, process.env.JWT_SECERET)
+                res.status(200).json({message: "website created successfully"})
             }else{
                 return res.status(400).json({message: 'you should fill out all the required fields'})
             }
@@ -41,21 +40,29 @@ const addWebsite = async (req, res, next) =>{
     }
 }
 
+const getWebsites = async (req, res, next) => {
+    try {
+        const allWebsites = await Website.find()
+        if(allWebsites.length > 0) {
+            return res.status(200).json(allWebsites)
+        }else{
+            return res.status(404).json({message: "no websites found"})
+        }
+    } catch (error) {
+        
+    }
+}
+
 const deletedWebsite = async (req, res, next) =>{
     try {
-        const websiteData = req.cookies.websiteData;
-        let websiteId
-        jwt.verify(websiteData, process.env.JWT_SECERET, (err, decoded)=>{
-            if(err) return res.status(401).json({message:err.message});
-            websiteId = decoded.id;
-        })
+        const { websiteId } = req.params
         if(!websiteId){
            return res.status(400).json({message: 'bad request'})
         }else{
             const website = await Website.findById(websiteId)
             if(website){
                 await Website.deleteOne({_id: websiteId})
-                return res.clearCookie('websiteData', {httpOnly: true}).status(200).json({message: 'website deleted successfully'})
+                return res.status(200).json({message: 'website deleted successfully'})
             }else{
                 return res.status(404).json({message: 'website not found'})
             }
@@ -68,5 +75,6 @@ const deletedWebsite = async (req, res, next) =>{
 
 module.exports = {
     addWebsite,
-    deletedWebsite
+    deletedWebsite,
+    getWebsites
 }
