@@ -7,9 +7,9 @@ if (process.env.NODE_ENV !== 'production'){
 const getUserProfile = async(req, res, next) => {
     try {
         const userId = req.userId
-        if(!userId) throw new Error("Can't get user profile");
+        if(!userId) return res.status(404).json({message: "Can't get user profile"});
         const userProfile = await Profile.findOne({userId});
-        if(!userProfile) throw new Error("User profile not found please register first");
+        if(!userProfile) return res.status(404).json({message: "User profile not found please register first"});
         res.status(200).json(userProfile);
     } catch (error) {
         console.error(error)
@@ -44,18 +44,5 @@ const updateUserProfile = async(req, res, next) => {
     }
 }
 
-const deleteUserProfile = async(req, res, next) => {
-    try {
-        const userId = req.userId
-        if(!userId) throw new Error("Can't get user profile");
-        await Profile.findOneAndDelete({userId}).then(()=>{
-            res.status(200).json({message: "User profile deleted successfully"})
-        }).catch(err => console.log(err));        
-    } catch (error) {
-        console.error(error)
-        res.status(400).json({message: error.message});  
-    }
-}
 
-
-module.exports = { getUserProfile, deleteUserProfile, updateUserProfile }
+module.exports = { getUserProfile, updateUserProfile }
