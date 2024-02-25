@@ -29,7 +29,7 @@ const ProfileSchema = new mongoose.Schema({
     },
     phoneNumber: {
         type: String,
-        required: true,
+        required: false,
         unique: true,
     },
     userId: {

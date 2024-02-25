@@ -32,8 +32,8 @@ const login = async function (req, res, next) {
 const register = async function (req, res, next) {
   try {
     console.log('req.body', req.body)
-    if (!req.body.name || !req.body.password || !req.body.email) {
-      throw new Error('name, email and password are required')
+    if (!req.body.name || !req.body.password || !req.body.email || !req.body.fullName || !req.body.phoneNumber) {
+      throw new Error('name, email, password, fullName and PhoneNumber are required')
     }
     // Check if user already exists
     const existingUser = await User.findOne({ email: req.body.email });
@@ -99,5 +99,27 @@ const deleteUser = async (req, res, next) =>{
   await Profile.deleteOne({userId})
   res.status(200).json({message: "User deleted successfully"})
 }
+
+// const checkingAdmin = async (req, res, next) => {
+//   try {
+//     const signedToken = req.cookies.accessToken
+//     let userId 
+//     jwt.verify(signedToken , process.env.JWT_SECERET, (err, decoded)=>{
+//         if(err) return res.status(401).json({message:err.message});
+//         userId = decoded.id
+//     })
+//     const user = await User.findById(userId)
+//     // console.log(user)
+//     if(!user) return res.status(401).json({message:err.message});
+//     req.userId = userId
+//     const userRole = user.role
+//     if(userRole !== "super"){
+//         return res.status(401).json({message: "You are not allowed to do such action."});
+//     }
+// } catch (error) {
+//     console.log(error)
+//     res.status(500).json({message:error.message});
+// } 
+// }
 
 module.exports = { register, login, logoutAll, getAllUsers, deleteUser }

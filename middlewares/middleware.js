@@ -6,7 +6,7 @@ if(process.env.NODE_ENV !== 'production'){
 
 
 const accessUser = async(req, res, next) =>{
-    const signedToken = req.cookies.accessToken
+    const signedToken = req.cookies.accessToken || req.cookies.adminToken
     let userId 
     jwt.verify(signedToken , process.env.JWT_SECERET, (err, decoded)=>{
         if(err) return res.status(401).json({message:err.message});
@@ -21,7 +21,7 @@ const accessUser = async(req, res, next) =>{
 
 const checkAdmin = async (req, res, next) =>{
    try {
-        const signedToken = req.cookies.accessToken
+        const signedToken = req.cookies.accessToken || req.cookies.adminToken
         let userId 
         jwt.verify(signedToken , process.env.JWT_SECERET, (err, decoded)=>{
             if(err) return res.status(401).json({message:err.message});
