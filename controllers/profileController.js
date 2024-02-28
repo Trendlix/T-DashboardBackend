@@ -20,17 +20,19 @@ const getUserProfile = async(req, res, next) => {
     }
 }
  
-const updateUserProfile = async(req, res, next) => {
+const updateWithoutPassword = async(req, res, next) => {
     try {
         const userId = req.userId
         if(!userId) throw new Error("Can't get user profile");
         const userProfile = await Profile.findOne({userId})
         const user = await User.findById(userId)
-        if(!req.body.username && !req.body.password && !req.body.fullName && !req.body.email && !req.body.photo) return res.status(400).json({message: 'Nothing to be changed'})
-        if(!userProfile) throw new Error("user profile not found");
-
+        if(!req.body.username && !req.body.fullName && !req.body.email && !req.body.photo){
+            return res.status(400).json({message: 'Nothing to be changed'})  
+        } 
+        if(!userProfile) return res.status(404).json({message: "user profile not found"});
         if(req.body.username){
             userProfile.username = req.body.username;
+            user.name = req.body.username
         }
 
         if(req.body.fullName){
@@ -42,18 +44,18 @@ const updateUserProfile = async(req, res, next) => {
         }
         if(req.body.email){
             userProfile.email = req.body.email;
-        }
-        if(req.body.currentPassword && req.body.newPassword && req.body.confirmPassword){
-            if(req.body.newPassword === req.body.confirmPassword){
-                const isCorrect = bcrypt.compareSync(req.body.currentPassword, user.password);
-                if(!isCorrect) return res.status(400).json({message: 'Invalid password'})
-                user.password = req.body.newPassword
+            user.email = req.body.email;
+            const token = jwt.sign({id: user._id, email: req.body.email}, process.env.JWT_SECERET)
+            user.tokens = user.tokens.concat(token);
+            if(user.role==='super'){
+                res.cookie('adminToken', token, {httpOnly: false})
             }else{
-                throw new Error('Passwords do not match')
+                res.cookie('accessToken', token, {httpOnly: false})
             }
         }
-        const updatedProfile = await userProfile.save();
-        res.status(200).json(updatedProfile);
+        const updatedProfile = await userProfile.save({versionKey: 'version'});
+        const updatedUser = await user.save({versionKey: 'version'});
+        res.status(200).json({profile: updatedProfile});
     } catch (error) {
         console.error(error);
         res.status(400).json({message: error.message});
@@ -61,4 +63,4 @@ const updateUserProfile = async(req, res, next) => {
 }
 
 
-module.exports = { getUserProfile, updateUserProfile }
+module.exports = { getUserProfile, updateWithoutPassword }

@@ -29,7 +29,7 @@ const checkAdmin = async (req, res, next) =>{
         })
         const user = await User.findById(userId)
         // console.log(user)
-        if(!user) return res.status(401).json({message:err.message});
+        if(!user) return res.status(401).json({message:'User not found'});
         req.userId = userId
         const userRole = user.role
         if(userRole !== "super"){
