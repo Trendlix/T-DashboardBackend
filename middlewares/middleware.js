@@ -7,6 +7,7 @@ if(process.env.NODE_ENV !== 'production'){
 
 const accessUser = async(req, res, next) =>{
     const signedToken = req.cookies.accessToken || req.cookies.adminToken
+    if(!signedToken) console.log('No Access token')
     let userId 
     jwt.verify(signedToken , process.env.JWT_SECERET, (err, decoded)=>{
         if(err) return res.status(401).json({message:err.message});
