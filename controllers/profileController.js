@@ -48,9 +48,9 @@ const updateWithoutPassword = async(req, res, next) => {
             const token = jwt.sign({id: user._id, email: req.body.email}, process.env.JWT_SECERET)
             user.tokens = user.tokens.concat(token);
             if(user.role==='super'){
-                res.cookie('adminToken', token, {httpOnly: false})
+                res.cookie('adminToken', token, {httpOnly: false, secure: process.env.NODE_ENV === 'production', sameSite: 'None'})
             }else{
-                res.cookie('accessToken', token, {httpOnly: false})
+                res.cookie('accessToken', token, {httpOnly: false, secure: process.env.NODE_ENV === 'production', sameSite: 'None'})
             }
         }
         const updatedProfile = await userProfile.save({versionKey: 'version'});
