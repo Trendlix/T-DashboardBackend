@@ -22,9 +22,9 @@ const login = async function (req, res, next) {
     user.save(); 
     const { password, ...info } = user._doc;
     if(info.role === 'super'){
-      res.cookie("adminToken", token, { httpOnly: false, secure: process.env.NODE_ENV === 'production', sameSite: 'None' })
+      res.cookie("adminToken", token, { httpOnly: false, })
     }else{
-      res.cookie("accessToken", token, { httpOnly: false, secure: process.env.NODE_ENV === 'production', sameSite: 'None' })
+      res.cookie("accessToken", token, { httpOnly: false, })
     }
       res.status(200).json(info);
   } catch (err) {
