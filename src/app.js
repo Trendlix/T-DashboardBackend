@@ -18,7 +18,7 @@ const port = process.env.PORT || 5000;
 app.use(cookieParser());
 
 // List of allowed origins
-const allowedOrigins = ['http://localhost:3000', 'https://vercel.com'];
+const allowedOrigins = ['http://localhost:3000', "t-dashboard-frontend-git-master-trendlix.vercel.app"];
 
 app.use(
   cors({
