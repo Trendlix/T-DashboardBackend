@@ -18,25 +18,20 @@ const port = process.env.PORT || 5000;
 app.use(cookieParser());
 
 // List of allowed origins
-const allowedOrigins = ['http://localhost:3000', "https://t-dashboard-frontend.vercel.app"];
-
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: ['http://localhost:3000', "https://t-dashboard-frontend.vercel.app", "*"],  
     credentials: true,
-    exposedHeaders: ["accessToken", "accesstoken"],
+    exposedHeader: ["accessToken", "accesstoken", 'Access-Control-Allow-Origin'], 
   })
 );
-
+app.use(function (req, res, next) {
+  res.header('Content-Type', 'application/json');
+  res.header("Access-Control-Allow-Credentials", true);
+  // res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.use(function (req, res, next) {
   res.header('Content-Type', 'application/json');
