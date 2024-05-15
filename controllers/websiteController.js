@@ -7,8 +7,6 @@ if (process.env.NODE_ENV !== 'production'){
     require('dotenv').config() 
 }
 
-console.log(process.env.JWT_SECERET, "from add web")
-
 const addWebsite = async (req, res, next) =>{
     try {
         const userId = req.userId
