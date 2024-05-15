@@ -22,7 +22,7 @@ app.use(
   cors({
     origin: ['http://localhost:3000', "https://t-dashboard-frontend.vercel.app", "*"],  
     credentials: true,
-    exposedHeader: ["accessToken", "accesstoken", 'Access-Control-Allow-Origin'], 
+    exposedHeader: ["accessToken", "accesstoken","adminToken", "admintoken", 'Access-Control-Allow-Origin'], 
   })
 );
 app.use(function (req, res, next) {
