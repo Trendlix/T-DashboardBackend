@@ -18,7 +18,7 @@ const port = process.env.PORT || 5000;
 app.use(cookieParser());
 
 // List of allowed origins
-const allowedOrigins = ['http://localhost:3000', "https://t-dashboard-frontend.vercel.app/"];
+const allowedOrigins = ['http://localhost:3000', "https://t-dashboard-frontend.vercel.app"];
 
 app.use(
   cors({
@@ -33,9 +33,10 @@ app.use(
       }
     },
     credentials: true,
-    exposedHeaders: ["accessToken", "accesstoken", 'Access-Control-Allow-Origin'],
+    exposedHeaders: ["accessToken", "accesstoken"],
   })
 );
+
 
 app.use(function (req, res, next) {
   res.header('Content-Type', 'application/json');
