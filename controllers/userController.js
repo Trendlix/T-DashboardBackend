@@ -19,17 +19,17 @@ const login = async function (req, res, next) {
     const { password, ...info } = user._doc;
     if(info.role === 'super'){
       res.cookie("adminToken", token, {
-          httpOnly: true, // Helps prevent XSS attacks
+          httpOnly: false, // Helps prevent XSS attacks
           secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-          sameSite: 'lax', // Helps prevent CSRF attacks
+          sameSite: process.env.NODE_ENV === 'production' ? None : 'Lax', // Helps prevent CSRF attacks
           maxAge: 3600000,
           path : '/',
         })
     }else{
       res.cookie("accessToken", token, {
-          httpOnly: true, // Helps prevent XSS attacks
+          httpOnly: false, // Helps prevent XSS attacks
           secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-          sameSite: 'lax', // Helps prevent CSRF attacks
+          sameSite: process.env.NODE_ENV === 'production' ? None : 'Lax', // Helps prevent CSRF attacks
           maxAge: 3600000,
           path : '/',
         })
@@ -96,9 +96,9 @@ const logoutAll = async function (req, res) {
     await user.save()
     res
       .clearCookie("accessToken", {
-                    httpOnly: true, // Helps prevent XSS attacks
+                    httpOnly: false, // Helps prevent XSS attacks
                     secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-                    sameSite: 'lax', // Helps prevent CSRF attacks
+                    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Helps prevent CSRF attacks
                     maxAge: 3600000,
                     path : '/',
                 })

@@ -50,17 +50,17 @@ const updateWithoutPassword = async(req, res, next) => {
             user.tokens = user.tokens.concat(token);
             if(user.role==='super'){
                 res.cookie('adminToken', token, {
-                    httpOnly: true, // Helps prevent XSS attacks
+                    httpOnly: false, // Helps prevent XSS attacks
                     secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-                    sameSite: 'lax', // Helps prevent CSRF attacks
+                    sameSite: process.env.NODE_ENV === 'production' ? None : 'Lax', // Helps prevent CSRF attacks
                     maxAge: 3600000, // 1 hour in milliseconds
                     path : '/',
                 })
             }else{
                 res.cookie('accessToken', token, {
-                    httpOnly: true, // Helps prevent XSS attacks
+                    httpOnly: false, // Helps prevent XSS attacks
                     secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-                    sameSite: 'lax', // Helps prevent CSRF attacks
+                    sameSite: process.env.NODE_ENV === 'production' ? None : 'Lax', // Helps prevent CSRF attacks
                     maxAge: 3600000, // 1 hour in milliseconds
                     path : '/',
                 })
