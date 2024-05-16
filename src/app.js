@@ -4,9 +4,8 @@ const express = require("express");
 require("../config/dbConnection");
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
-
+const bodyParser = require("body-parser");
 const app = express();
-
 const user = require('../routes/userRoute');
 const profile = require('../routes/profileRoute');
 const website = require('../routes/websiteRoute');
@@ -14,25 +13,27 @@ const website = require('../routes/websiteRoute');
 const port = process.env.PORT || 5000;
 
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+
 
 // List of allowed origins
 app.use(
   cors({
-    origin: ['http://localhost:3000', "https://t-dashboard-frontend.vercel.app", "*"],  
+    origin: ['http://localhost:3000', "https://t-dashboard-frontend.vercel.app"],  
     credentials: true,
-    exposedHeader: ["accessToken", "accesstoken","adminToken", "admintoken", 'Access-Control-Allow-Origin'], 
+    // exposedHeader: ["accessToken", "accesstoken","adminToken", "admintoken", 'Access-Control-Allow-Origin'], 
   })
 );
-app.use(function (req, res, next) {
-  res.header('Content-Type', 'application/json');
-  res.header("Access-Control-Allow-Credentials", true);
-  // res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header('Content-Type', 'application/json');
+//   res.header("Access-Control-Allow-Credentials", true);
+//   // res.header("Access-Control-Allow-Origin", "*")
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 // // app.use(express.urlencoded({ extended: false }))
-app.use(express.json());
 
 app.use('/', user);
 app.use('/', profile);
