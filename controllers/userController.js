@@ -21,7 +21,7 @@ const login = async function (req, res, next) {
       res.cookie("adminToken", token, {
           httpOnly: false, // Helps prevent XSS attacks
           secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-          sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Helps prevent CSRF attacks
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax', // Helps prevent CSRF attacks
           maxAge: 3600000,
           path : '/',
         })
@@ -29,7 +29,7 @@ const login = async function (req, res, next) {
       res.cookie("accessToken", token, {
           httpOnly: false, // Helps prevent XSS attacks
           secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-          sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Helps prevent CSRF attacks
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax', // Helps prevent CSRF attacks
           maxAge: 3600000,
           path : '/',
         })
@@ -98,7 +98,7 @@ const logoutAll = async function (req, res) {
       .clearCookie("accessToken", {
                     httpOnly: false, // Helps prevent XSS attacks
                     secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-                    sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax', // Helps prevent CSRF attacks
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax', // Helps prevent CSRF attacks
                     maxAge: 3600000,
                     path : '/',
                 })
