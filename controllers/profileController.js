@@ -2,10 +2,7 @@ const Profile = require('../models/profileModel')
 const jwt = require('jsonwebtoken')
 const User = require('../models/userModel')
 const bcrypt = require('bcryptjs/dist/bcrypt')
-
-if (process.env.NODE_ENV !== 'production'){
-    require('dotenv').config() 
-}
+require('dotenv').config()
 
 const getUserProfile = async(req, res, next) => {
     try {
@@ -50,19 +47,19 @@ const updateWithoutPassword = async(req, res, next) => {
             user.tokens = user.tokens.concat(token);
             if(user.role==='super'){
                 res.cookie('adminToken', token, {
-                    httpOnly: false, // Helps prevent XSS attacks
-                    secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax', // Helps prevent CSRF attacks
-                    maxAge: 3600000, // 1 hour in milliseconds
-                    path : '/',
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'None',
+                    maxAge: 3600000,
+                    path: '/',
                 })
             }else{
                 res.cookie('accessToken', token, {
-                    httpOnly: false, // Helps prevent XSS attacks
-                    secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax', // Helps prevent CSRF attacks
-                    maxAge: 3600000, // 1 hour in milliseconds
-                    path : '/',
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'None',
+                    maxAge: 3600000,
+                    path: '/',
                 })
             }
         }
