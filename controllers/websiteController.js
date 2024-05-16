@@ -41,7 +41,7 @@ const addWebsite = async (req, res, next) =>{
 const getWebsites = async (req, res, next) => {
     try {
         const allWebsites = await Website.find()
-        if(allWebsites.length > 0) {
+        if(allWebsites.length >= 0) {
             return res.status(200).json(allWebsites)
         }else{
             return res.status(404).json({message: "no websites found"})

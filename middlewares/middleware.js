@@ -1,8 +1,7 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken')
-if(process.env.NODE_ENV !== 'production'){
-    require('dotenv').config();
-}
+require('dotenv').config();
+
 
 
 const accessUser = async(req, res, next) =>{
@@ -10,7 +9,7 @@ const accessUser = async(req, res, next) =>{
     if(!signedToken) console.log('No Access token')
     let userId 
     jwt.verify(signedToken , process.env.JWT_SECERET, (err, decoded)=>{
-        if(err) return res.status(401).json({message:err.message});
+        if(err) return res.status(401).json({message: 'the signed token cannot be verified and decoded'});
         userId = decoded.id
     })
     const user = await User.findById(userId)
