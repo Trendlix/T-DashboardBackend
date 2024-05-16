@@ -2,11 +2,7 @@ const User = require('../models/userModel')
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const Profile = require('../models/profileModel')
-
-if (process.env.NODE_ENV !== 'production'){
-  require('dotenv').config() 
-}
-
+require('dotenv').config() 
 // Login
 const login = async function (req, res, next) {
   try {
@@ -22,9 +18,16 @@ const login = async function (req, res, next) {
     user.save(); 
     const { password, ...info } = user._doc;
     if(info.role === 'super'){
-      res.cookie("adminToken", token, { httpOnly: false })
-    }else
-      res.cookie("accessToken", token, { httpOnly: false })
+      res.cookie("adminToken", token, {
+                  httpOnly: false, // Helps prevent XSS attacks
+                 
+              })
+    }else{
+      res.cookie("accessToken", token, {
+                  httpOnly: false, // Helps prevent XSS attacks
+                 
+              })
+    }
     
       res.status(200).json(info);
   } catch (err) {

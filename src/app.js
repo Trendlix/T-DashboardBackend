@@ -33,13 +33,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-// app.use(function (req, res, next) {
-//   res.header('Content-Type', 'application/json');
-//   res.header("Access-Control-Allow-Credentials", true);
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
-
 // // app.use(express.urlencoded({ extended: false }))
 app.use(express.json());
 

@@ -10,6 +10,7 @@ if (process.env.NODE_ENV !== 'production'){
 const getUserProfile = async(req, res, next) => {
     try {
         const userId = req.userId
+        console.log(userId)
         if(!userId) return res.status(404).json({message: "Can't get user profile"});
         const userProfile = await Profile.findOne({userId});
         if(!userProfile) return res.status(404).json({message: "User profile not found please register first"});
@@ -48,9 +49,15 @@ const updateWithoutPassword = async(req, res, next) => {
             const token = jwt.sign({id: user._id, email: req.body.email}, process.env.JWT_SECERET)
             user.tokens = user.tokens.concat(token);
             if(user.role==='super'){
-                res.cookie('adminToken', token, {httpOnly: false})
+                res.cookie('adminToken', token, {
+                    httpOnly: false, // Helps prevent XSS attacks
+                   
+                })
             }else{
-                res.cookie('accessToken', token, {httpOnly: false})
+                res.cookie('accessToken', token, {
+                    httpOnly: false, // Helps prevent XSS attacks
+                   
+                })
             }
         }
         const updatedProfile = await userProfile.save({versionKey: 'version'});
