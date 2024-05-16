@@ -19,14 +19,18 @@ const login = async function (req, res, next) {
     const { password, ...info } = user._doc;
     if(info.role === 'super'){
       res.cookie("adminToken", token, {
-                  httpOnly: false, // Helps prevent XSS attacks
-                 
-              })
+          httpOnly: true, // Helps prevent XSS attacks
+          secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
+          sameSite: 'None', // Helps prevent CSRF attacks
+          maxAge: 3600000 // 1 hour in milliseconds
+        })
     }else{
       res.cookie("accessToken", token, {
-                  httpOnly: false, // Helps prevent XSS attacks
-                 
-              })
+          httpOnly: true, // Helps prevent XSS attacks
+          secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
+          sameSite: 'None', // Helps prevent CSRF attacks
+          maxAge: 3600000 // 1 hour in milliseconds
+        })
     }
     
       res.status(200).json(info);
@@ -89,7 +93,12 @@ const logoutAll = async function (req, res) {
     user.tokens = []
     await user.save()
     res
-      .clearCookie("accessToken", {httpOnly: true})
+      .clearCookie("accessToken", {
+                    httpOnly: true, // Helps prevent XSS attacks
+                    secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
+                    sameSite: 'None', // Helps prevent CSRF attacks
+                    maxAge: 3600000 // 1 hour in milliseconds
+                })
       .status(200)
       .send('successfully logged out from all devices')
   } catch (e) {
