@@ -19,17 +19,17 @@ const login = async function (req, res, next) {
     const { password, ...info } = user._doc;
     if(info.role === 'super'){
       res.cookie("adminToken", token, {
-        httpOnly: true,
+        httpOnly: process.env.NODE_ENV === 'production',
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'None',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None': 'lax',
         maxAge: 3600000,
         path: '/',
     })
     }else{
       res.cookie("accessToken", token, {
-        httpOnly: true,
+        httpOnly: process.env.NODE_ENV === 'production',
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'None',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None': 'lax',
         maxAge: 3600000,
         path: '/',
     })

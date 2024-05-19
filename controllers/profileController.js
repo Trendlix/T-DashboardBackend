@@ -47,17 +47,17 @@ const updateWithoutPassword = async(req, res, next) => {
             user.tokens = user.tokens.concat(token);
             if(user.role==='super'){
                 res.cookie('adminToken', token, {
-                    httpOnly: true,
+                    httpOnly: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'None',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'None': 'lax',
                     maxAge: 3600000,
                     path: '/',
                 })
             }else{
                 res.cookie('accessToken', token, {
-                    httpOnly: true,
+                    httpOnly: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'None',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'None': 'lax',
                     maxAge: 3600000,
                     path: '/',
                 })
