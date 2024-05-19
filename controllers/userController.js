@@ -19,20 +19,20 @@ const login = async function (req, res, next) {
     const { password, ...info } = user._doc;
     if(info.role === 'super'){
       res.cookie("adminToken", token, {
-          httpOnly: false, // Helps prevent XSS attacks
-          secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax', // Helps prevent CSRF attacks
-          maxAge: 3600000,
-          path : '/',
-        })
+        httpOnly: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None': 'lax',
+        maxAge: 3600000,
+        path: '/',
+    })
     }else{
       res.cookie("accessToken", token, {
-          httpOnly: false, // Helps prevent XSS attacks
-          secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax', // Helps prevent CSRF attacks
-          maxAge: 3600000,
-          path : '/',
-        })
+        httpOnly: process.env.NODE_ENV === 'production',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None': 'lax',
+        maxAge: 3600000,
+        path: '/',
+    })
     }
     
       res.status(200).json(info);
@@ -74,6 +74,29 @@ const register = async function (req, res, next) {
   }
 }
 
+const isAuth = async (req, res) => {
+   try {
+    const accessToken = req.cookies.accessToken
+    const adminToken = req.cookies.adminToken
+    if(!accessToken && !adminToken) return res.status(200).json({message: 'you are not authenticated no token', success: false});
+    let userId 
+    jwt.verify(adminToken ? adminToken : accessToken , process.env.JWT_SECERET, (err, decoded)=>{
+        if(err) return res.status(200).json({message: 'the signed token cannot be verified and decoded', success: false});
+        userId = decoded.id
+    })
+    const user = await User.findById(userId)
+    // console.log(user)
+    if(!user) {
+      return res.status(200).json({message:'user not found'})
+    }
+      res.status(200).json({success: true, message: 'token was successfully signed', isAdmin: adminToken ? true : false})
+   } catch (error) {
+     console.log(error)
+    return res.status(500).json({message: error.message})
+   }
+}
+
+
 const getAllUsers = async (req, res, next) => {
   try {
     const allUsers = await User.find();
@@ -94,14 +117,9 @@ const logoutAll = async function (req, res) {
     const user = await User.findById(userId)
     user.tokens = []
     await user.save()
+    res.clearCookie("accessToken")
+    res.clearCookie("adminToken")
     res
-      .clearCookie("accessToken", {
-                    httpOnly: false, // Helps prevent XSS attacks
-                    secure: process.env.NODE_ENV === 'production', // Ensure the cookie is sent over HTTPS only in production
-                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax', // Helps prevent CSRF attacks
-                    maxAge: 3600000,
-                    path : '/',
-                })
       .status(200)
       .send('successfully logged out from all devices')
   } catch (e) {
@@ -144,4 +162,4 @@ const updateOnlyPassword = async (req, res, next) =>{
 } 
 
 
-module.exports = { register, login, logoutAll, getAllUsers, deleteUser, updateOnlyPassword }
+module.exports = { register, login, logoutAll, getAllUsers, deleteUser, updateOnlyPassword, isAuth }
